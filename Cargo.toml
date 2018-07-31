@@ -1,0 +1,6 @@
+[package]
+name = "gol"
+version = "1.0.0"
+authors = ["Lyle Scott, III <lyle@ls3.io>"]
+
+[dependencies]
