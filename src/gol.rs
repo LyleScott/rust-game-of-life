@@ -1,5 +1,5 @@
 /*
-The universe of the Game of Life is an infinite, two-dimensional orthogonal grid of square
+The universe of the GoL of Life is an infinite, two-dimensional orthogonal grid of square
 cells, each of which is in one of two possible states, alive or dead, (or populated and unpopulated,
 respectively). Every cell interacts with its eight neighbours, which are the cells that are
 horizontally, vertically, or diagonally adjacent. At each step in time, the following transitions
@@ -157,18 +157,33 @@ pub struct Generation {
     pub survived: u64,
 }
 
-pub struct Game {
-    pub cells: Cells,
+impl Generation {
+
+    pub fn print(&self) {
+        // Generation stats.
+        println!("\nTick Rate: {}ms // Generation {: <4} // Killed {: <3} // Survived {: <3} // Born {: <3}",
+                 &self.tick_rate,
+                 &self.n, &self.killed,
+                 &self.survived, &self.born);
+    }
+
+}
+
+pub struct GoL {
     pub width: usize,
     pub height: usize,
+    pub cells: Cells,
     pub generation: Generation,
 }
 
-impl Game {
+impl GoL {
 
     pub fn new(width: usize, height: usize, tick_rate: u64) -> Self {
         let mut cells = Cells::new(width, height);
+
+        // Initial state.
         cells.seed();
+
         Self {
             cells,
             height,
@@ -184,11 +199,14 @@ impl Game {
     }
 
     pub fn print(&self) {
+        // Clears the screen.
+        print!("{}[2J", 27 as char);
+
+        // Print all Cells.
         &self.cells.print();
-        println!("\nTick Rate: {}ms // Generation {: <5} // Killed {: <3} // Survived {: <3} // Born {: <3}",
-                 &self.generation.tick_rate,
-                 &self.generation.n, &self.generation.killed,
-                 &self.generation.survived, &self.generation.born);
+
+        // Print Generation stats.
+        &self.generation.print();
     }
 
     pub fn tick(&mut self) {
@@ -210,38 +228,8 @@ impl Game {
 
         for (i, row) in self.cells.state.iter().enumerate() {
             for (j, col) in row.iter().enumerate() {
-                //match *col {
-                //    ALIVE => self.handle_live(*col),
-                //    DEAD => self.handle_dead(*col),
-                //    _ => println!("Fuck."),
-                //}
-                //*col = 'l';
-
                 let l = self.cells.state.len() - 1;
                 let mut n = 0;
-
-                // let mut v = [u8, 3];
-                // v.push(-1);
-                // v.push(0);
-                // v.push(1);
-                
-                // let mut k = Vec::new();
-                // k.push(-1);
-                // k.push(0);
-                // k.push(1);
-
-                // for i in v.into_iter() {
-                //     if i < 0 || i > HEIGHT {
-                //         continue
-                //     }
-                //     for j in k.into_iter() {
-                //         if j < 0 || j > WIDTH {
-                //             if self.cells.state[i][j].is_alive() {
-                //                 n += 1
-                //             }
-                //         }
-                //     }
-                // }
 
                 if i > 0 && j > 0 && self.cells.state[i-1][j-1].is_alive() {
                     n += 1
