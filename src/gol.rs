@@ -22,10 +22,9 @@ use std::{thread, time};
 const KILLED_ICON: char = '💔';
 const BORN_ICON: char = '💚';
 const SURVIVED_ICON: char = '💙';
-const DEAD_ICON: char = ' ';
-
-const WIDTH: usize = 110;
-const HEIGHT: usize = 65;
+const DEAD_ICON: char = 'b';
+const WIDTH: usize = 55;
+const HEIGHT: usize = 55;
 
 
 #[derive(Copy, Clone)]
@@ -64,40 +63,23 @@ impl Cells {
     }
 
     pub fn seed(&mut self) {
-//        for i in 0..HEIGHT-1 {
-//            self.state[i][WIDTH-1] = ALIVE;
-//        }
-//        for i in 0..HEIGHT-1 {
-//            self.state[i][0] = ALIVE;
-//        }
-//        for i in 0..WIDTH-1 {
-//            self.state[HEIGHT-1][i] = ALIVE;
-//        }
-//        for i in 0..WIDTH-1 {
-//            self.state[0][i] = ALIVE;
-//        }
-
-//        for i in 0..((WIDTH-1)/2)+WIDTH/2 {
-//            self.state[10][i] = ALIVE;
-//        }
-
-        // THIS ONE
-        for i in (HEIGHT/2)..(HEIGHT-1) {
-        //    self.state[i][WIDTH/2].icon = KILLED_ICON;
-            self.state[i][WIDTH/2].update(BORN_ICON);
+        /*
+        for i in 0..HEIGHT {
+            self.state[i][0].update(BORN_ICON);
+            self.state[i][WIDTH-1].update(BORN_ICON);
         }
+        for i in 0..WIDTH {
+            self.state[0][i].update(BORN_ICON);
+            self.state[HEIGHT-1][i].update(BORN_ICON);
+            //self.state[HEIGHT-2][i].update(KILLED_ICON);
+        }
+        */
 
-       for i in 0..WIDTH-1 {
-           self.state[HEIGHT - 1][WIDTH - 1].update(BORN_ICON);
-       }
-//        for i in 0..height {
-//            self.state[0][i] = ALIVE;
-//        }
-//        for i in 0..height {
-//            self.state[29][i] = ALIVE;
-//        }
-
+        // THIS ONE TOO
         self.state[0][0].update(BORN_ICON);
+        self.state[0][WIDTH-1].update(BORN_ICON);
+        self.state[HEIGHT-1][0].update(BORN_ICON);
+        self.state[HEIGHT-1][WIDTH-1].update(BORN_ICON);
         self.state[10][10].update(BORN_ICON);
         self.state[11][10].update(BORN_ICON);
         self.state[12][10].update(BORN_ICON);
@@ -121,12 +103,45 @@ impl Cells {
         self.state[21][11].update(BORN_ICON);
         self.state[22][11].update(BORN_ICON);
         self.state[23][11].update(BORN_ICON);
+        self.state[30][11].update(BORN_ICON);
+        self.state[30][12].update(BORN_ICON);
+        self.state[31][12].update(BORN_ICON);
+        self.state[31][13].update(BORN_ICON);
+        self.state[32][14].update(BORN_ICON);
+        self.state[33][15].update(BORN_ICON);
+        self.state[34][16].update(BORN_ICON);
+        self.state[35][17].update(BORN_ICON);
+
+        self.state[HEIGHT-1][WIDTH-1].update(BORN_ICON);
+        self.state[HEIGHT-1][WIDTH-1].update(BORN_ICON);
+        self.state[HEIGHT-1][WIDTH-1].update(BORN_ICON);
+
+        for i in HEIGHT-12..HEIGHT-1 {
+            for j in WIDTH-6..WIDTH-1 {
+                self.state[i][j].update(BORN_ICON);
+            }
+        }
+
+        for i in 0..8 {
+            for j in 0..12 {
+                self.state[i][j].update(BORN_ICON);
+            }
+        }
+
+        for i in 10..25 {
+            for j in 30..40 {
+                self.state[i][j].update(BORN_ICON);
+            }
+        }
     }
 
     pub fn print(&self) {
-        for i in self.state.iter() {
-            for j in i.iter() {
-                print!("{} ", j.icon)
+        for row in self.state.iter() {
+            for col in row.iter() {
+                match col.icon {
+                    'b' => print!("   "),
+                    _ => print!("{} ", col.icon),
+                }
             }
             println!();
         }
@@ -170,7 +185,7 @@ impl Game {
 
     pub fn print(&self) {
         &self.cells.print();
-        println!("Tick Rate: {}ms // Generation {: <5} // Killed {: <3} // Survived {: <3} // Born {: <3}",
+        println!("\nTick Rate: {}ms // Generation {: <5} // Killed {: <3} // Survived {: <3} // Born {: <3}",
                  &self.generation.tick_rate,
                  &self.generation.n, &self.generation.killed,
                  &self.generation.survived, &self.generation.born);
@@ -203,8 +218,31 @@ impl Game {
                 //*col = 'l';
 
                 let l = self.cells.state.len() - 1;
-
                 let mut n = 0;
+
+                // let mut v = [u8, 3];
+                // v.push(-1);
+                // v.push(0);
+                // v.push(1);
+                
+                // let mut k = Vec::new();
+                // k.push(-1);
+                // k.push(0);
+                // k.push(1);
+
+                // for i in v.into_iter() {
+                //     if i < 0 || i > HEIGHT {
+                //         continue
+                //     }
+                //     for j in k.into_iter() {
+                //         if j < 0 || j > WIDTH {
+                //             if self.cells.state[i][j].is_alive() {
+                //                 n += 1
+                //             }
+                //         }
+                //     }
+                // }
+
                 if i > 0 && j > 0 && self.cells.state[i-1][j-1].is_alive() {
                     n += 1
                 }
@@ -214,19 +252,19 @@ impl Game {
                 if i < l && j > 0 && self.cells.state[i+1][j-1].is_alive() {
                     n += 1
                 }
-                if i > 0 && self.cells.state[i-1][j].is_alive() {
+                if n < 4 && i > 0 && self.cells.state[i-1][j].is_alive() {
                     n += 1
                 }
-                if i < l && self.cells.state[i+1][j].is_alive() {
+                if n < 4 && i < l && self.cells.state[i+1][j].is_alive() {
                     n += 1
                 }
-                if i > 0 && j < l && self.cells.state[i-1][j+1].is_alive() {
+                if n < 4 && i > 0 && j < l && self.cells.state[i-1][j+1].is_alive() {
                     n += 1
                 }
-                if j < l && self.cells.state[i][j+1].is_alive() {
+                if n < 4 && j < l && self.cells.state[i][j+1].is_alive() {
                     n += 1
                 }
-                if i < l && j < l && self.cells.state[i+1][j+1].is_alive() {
+                if n < 4 && i < l && j < l && self.cells.state[i+1][j+1].is_alive() {
                     n += 1
                 }
 

@@ -2,7 +2,7 @@ mod gol;
 
 const WIDTH: usize = 30;
 const HEIGHT: usize = 40;
-const TICK_RATE: u64 = 50;
+const TICK_RATE: u64 = 200;
 
 
 fn main() {
@@ -12,5 +12,6 @@ fn main() {
         print!("{}[2J", 27 as char);
         g.print();
         g.tick();
+        //break;
     }
 }
