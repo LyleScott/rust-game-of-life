@@ -50,15 +50,15 @@ impl Cell {
 
 }
 
-pub struct Cells {
-    state: [[Cell; WIDTH]; HEIGHT]
+pub struct Generation {
+    state: [[Cell; WIDTH]; HEIGHT],
     n: u64,
     born: u64,
     killed: u64,
     survived: u64,
 }
 
-impl Cells {
+impl Generation {
 
     pub fn new(width: usize, height: usize) -> Self {
         Self {
@@ -155,28 +155,30 @@ impl Cells {
         }
 
         // Generation stats.
-        println!("\nTick Rate: {}ms // Generation {: <4} // Killed {: <3} // Survived {: <3} // Born {: <3}",
+        println!("\nGeneration {: <4} // Killed {: <3} // Survived {: <3} // Born {: <3}",
                  &self.n, &self.killed, &self.survived, &self.born);
     }
 
 }
 
 pub struct GoL {
-    pub width: usize,
-    pub height: usize,
-    pub cells: Cells,
+    width: usize,
+    height: usize,
+    tick_rate: u64,
+    generation: Generation,
 }
 
 impl GoL {
 
     pub fn new(width: usize, height: usize, tick_rate: u64) -> Self {
-        let mut cells = Cells::new(width, height);
+        let mut generation = Generation::new(width, height);
 
         // Initial state.
-        cells.seed();
+        generation.seed();
 
         Self {
-            cells,
+            tick_rate,
+            generation,
             height,
             width,
         }
@@ -186,10 +188,7 @@ impl GoL {
         // Clears the screen.
         print!("{}[2J", 27 as char);
 
-        // Print all Cells.
-        &self.cells.print();
-
-        // Print Generation stats.
+        // Print all Generation.
         &self.generation.print();
     }
 
@@ -208,56 +207,56 @@ impl GoL {
         self.generation.killed = 0;
         self.generation.survived = 0;
 
-        let mut f_cells = Cells::new(self.width, self.height);
+        let mut f_generation = Generation::new(self.width, self.height);
 
-        for (i, row) in self.cells.state.iter().enumerate() {
+        for (i, row) in self.generation.state.iter().enumerate() {
             for (j, col) in row.iter().enumerate() {
-                let l = self.cells.state.len() - 1;
+                let l = self.generation.state.len() - 1;
                 let mut n = 0;
 
-                if i > 0 && j > 0 && self.cells.state[i-1][j-1].is_alive() {
+                if i > 0 && j > 0 && self.generation.state[i-1][j-1].is_alive() {
                     n += 1
                 }
-                if j > 0 && self.cells.state[i][j-1].is_alive() {
+                if j > 0 && self.generation.state[i][j-1].is_alive() {
                     n += 1
                 }
-                if i < l && j > 0 && self.cells.state[i+1][j-1].is_alive() {
+                if i < l && j > 0 && self.generation.state[i+1][j-1].is_alive() {
                     n += 1
                 }
-                if n < 4 && i > 0 && self.cells.state[i-1][j].is_alive() {
+                if n < 4 && i > 0 && self.generation.state[i-1][j].is_alive() {
                     n += 1
                 }
-                if n < 4 && i < l && self.cells.state[i+1][j].is_alive() {
+                if n < 4 && i < l && self.generation.state[i+1][j].is_alive() {
                     n += 1
                 }
-                if n < 4 && i > 0 && j < l && self.cells.state[i-1][j+1].is_alive() {
+                if n < 4 && i > 0 && j < l && self.generation.state[i-1][j+1].is_alive() {
                     n += 1
                 }
-                if n < 4 && j < l && self.cells.state[i][j+1].is_alive() {
+                if n < 4 && j < l && self.generation.state[i][j+1].is_alive() {
                     n += 1
                 }
-                if n < 4 && i < l && j < l && self.cells.state[i+1][j+1].is_alive() {
+                if n < 4 && i < l && j < l && self.generation.state[i+1][j+1].is_alive() {
                     n += 1
                 }
 
                 if col.is_alive() {
                     if n < 2 || n > 3 {
-                        f_cells.state[i][j].update(KILLED_ICON);
+                        f_generation.state[i][j].update(KILLED_ICON);
                         self.generation.killed += 1;
                     } else {
-                         f_cells.state[i][j].update(SURVIVED_ICON);
+                         f_generation.state[i][j].update(SURVIVED_ICON);
                         self.generation.survived += 1;
                     }
                 } else {
                     if n == 3 {
-                        f_cells.state[i][j].update(BORN_ICON);
+                        f_generation.state[i][j].update(BORN_ICON);
                         self.generation.born += 1
                     }
                 }
             }
         }
 
-        self.cells = f_cells;
-        thread::sleep(time::Duration::from_millis(self.generation.tick_rate));
+        self.generation = f_generation;
+        thread::sleep(time::Duration::from_millis(self.tick_rate));
     }
 }
