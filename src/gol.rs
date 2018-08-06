@@ -29,7 +29,7 @@ const HEIGHT: usize = 55;
 
 #[derive(Copy, Clone)]
 pub struct Cell {
-    pub icon: char
+    icon: char,
 }
 
 impl Cell {
