@@ -51,14 +51,22 @@ impl Cell {
 }
 
 pub struct Cells {
-   state: [[Cell; WIDTH]; HEIGHT]
+    state: [[Cell; WIDTH]; HEIGHT]
+    n: u64,
+    born: u64,
+    killed: u64,
+    survived: u64,
 }
 
 impl Cells {
 
     pub fn new(width: usize, height: usize) -> Self {
         Self {
-            state: [[Cell::new(DEAD_ICON); WIDTH]; HEIGHT]
+            state: [[Cell::new(DEAD_ICON); WIDTH]; HEIGHT],
+            n: 0,
+            born: 0,
+            killed: 0,
+            survived: 0,
         }
     }
 
@@ -145,26 +153,10 @@ impl Cells {
             }
             println!();
         }
-    }
 
-}
-
-pub struct Generation {
-    pub n: u64,
-    pub tick_rate: u64,
-    pub born: u64,
-    pub killed: u64,
-    pub survived: u64,
-}
-
-impl Generation {
-
-    pub fn print(&self) {
         // Generation stats.
         println!("\nTick Rate: {}ms // Generation {: <4} // Killed {: <3} // Survived {: <3} // Born {: <3}",
-                 &self.tick_rate,
-                 &self.n, &self.killed,
-                 &self.survived, &self.born);
+                 &self.n, &self.killed, &self.survived, &self.born);
     }
 
 }
@@ -173,7 +165,6 @@ pub struct GoL {
     pub width: usize,
     pub height: usize,
     pub cells: Cells,
-    pub generation: Generation,
 }
 
 impl GoL {
@@ -188,13 +179,6 @@ impl GoL {
             cells,
             height,
             width,
-            generation: Generation {
-                n: 0,
-                tick_rate,
-                born: 0,
-                killed: 0,
-                survived: 0,
-            }
         }
     }
 
