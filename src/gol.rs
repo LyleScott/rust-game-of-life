@@ -1,6 +1,6 @@
 /*
 The universe of the GoL of Life is an infinite, two-dimensional orthogonal grid of square
-cells, each of which is in one of two possible states, alive or dead, (or populated and unpopulated,
+cells, each of which is in one of two possible cellss, alive or dead, (or populated and unpopulated,
 respectively). Every cell interacts with its eight neighbours, which are the cells that are
 horizontally, vertically, or diagonally adjacent. At each step in time, the following transitions
 occur:
@@ -28,7 +28,7 @@ const HEIGHT: usize = 55;
 
 
 pub struct Generation {
-    state: [[char; WIDTH]; HEIGHT],
+    cells: [[char; WIDTH]; HEIGHT],
     n: u64,
     born: u64,
     killed: u64,
@@ -39,7 +39,7 @@ impl Generation {
 
     pub fn new() -> Self {
         Self {
-            state: [[DEAD_ICON; WIDTH]; HEIGHT],
+            cells: [[DEAD_ICON; WIDTH]; HEIGHT],
             n: 0,
             born: 0,
             killed: 0,
@@ -50,72 +50,72 @@ impl Generation {
     pub fn seed(&mut self) {
         /*
         for i in 0..HEIGHT {
-            self.state[i][0] = BORN_ICON;
-            self.state[i][WIDTH-1] = BORN_ICON;
+            self.cells[i][0] = BORN_ICON;
+            self.cells[i][WIDTH-1] = BORN_ICON;
         }
         for i in 0..WIDTH {
-            self.state[0][i] = BORN_ICON;
-            self.state[HEIGHT-1][i] = BORN_ICON;
-            //self.state[HEIGHT-2][i] = KILLED_ICON;
+            self.cells[0][i] = BORN_ICON;
+            self.cells[HEIGHT-1][i] = BORN_ICON;
+            //self.cells[HEIGHT-2][i] = KILLED_ICON;
         }
         */
 
         // THIS ONE TOO
-        self.state[0][0] = BORN_ICON;
-        self.state[0][WIDTH-1] = BORN_ICON;
-        self.state[HEIGHT-1][0] = BORN_ICON;
-        self.state[HEIGHT-1][WIDTH-1] = BORN_ICON;
-        self.state[10][10] = BORN_ICON;
-        self.state[11][10] = BORN_ICON;
-        self.state[12][10] = BORN_ICON;
-        self.state[20][20] = BORN_ICON;
-        self.state[20][21] = BORN_ICON;
-        self.state[20][22] = BORN_ICON;
-        self.state[17][22] = BORN_ICON;
-        self.state[18][23] = BORN_ICON;
-        self.state[19][24] = BORN_ICON;
-        self.state[20][25] = BORN_ICON;
-        self.state[17][5] = BORN_ICON;
-        self.state[18][5] = BORN_ICON;
-        self.state[19][5] = BORN_ICON;
-        self.state[20][5] = BORN_ICON;
-        self.state[17][7] = BORN_ICON;
-        self.state[18][8] = BORN_ICON;
-        self.state[19][9] = BORN_ICON;
-        self.state[20][9] = BORN_ICON;
-        self.state[20][10] = BORN_ICON;
-        self.state[20][11] = BORN_ICON;
-        self.state[21][11] = BORN_ICON;
-        self.state[22][11] = BORN_ICON;
-        self.state[23][11] = BORN_ICON;
-        self.state[30][11] = BORN_ICON;
-        self.state[30][12] = BORN_ICON;
-        self.state[31][12] = BORN_ICON;
-        self.state[31][13] = BORN_ICON;
-        self.state[32][14] = BORN_ICON;
-        self.state[33][15] = BORN_ICON;
-        self.state[34][16] = BORN_ICON;
-        self.state[35][17] = BORN_ICON;
+        self.cells[0][0] = BORN_ICON;
+        self.cells[0][WIDTH-1] = BORN_ICON;
+        self.cells[HEIGHT-1][0] = BORN_ICON;
+        self.cells[HEIGHT-1][WIDTH-1] = BORN_ICON;
+        self.cells[10][10] = BORN_ICON;
+        self.cells[11][10] = BORN_ICON;
+        self.cells[12][10] = BORN_ICON;
+        self.cells[20][20] = BORN_ICON;
+        self.cells[20][21] = BORN_ICON;
+        self.cells[20][22] = BORN_ICON;
+        self.cells[17][22] = BORN_ICON;
+        self.cells[18][23] = BORN_ICON;
+        self.cells[19][24] = BORN_ICON;
+        self.cells[20][25] = BORN_ICON;
+        self.cells[17][5] = BORN_ICON;
+        self.cells[18][5] = BORN_ICON;
+        self.cells[19][5] = BORN_ICON;
+        self.cells[20][5] = BORN_ICON;
+        self.cells[17][7] = BORN_ICON;
+        self.cells[18][8] = BORN_ICON;
+        self.cells[19][9] = BORN_ICON;
+        self.cells[20][9] = BORN_ICON;
+        self.cells[20][10] = BORN_ICON;
+        self.cells[20][11] = BORN_ICON;
+        self.cells[21][11] = BORN_ICON;
+        self.cells[22][11] = BORN_ICON;
+        self.cells[23][11] = BORN_ICON;
+        self.cells[30][11] = BORN_ICON;
+        self.cells[30][12] = BORN_ICON;
+        self.cells[31][12] = BORN_ICON;
+        self.cells[31][13] = BORN_ICON;
+        self.cells[32][14] = BORN_ICON;
+        self.cells[33][15] = BORN_ICON;
+        self.cells[34][16] = BORN_ICON;
+        self.cells[35][17] = BORN_ICON;
 
-        self.state[HEIGHT-1][WIDTH-1] = BORN_ICON;
-        self.state[HEIGHT-1][WIDTH-1] = BORN_ICON;
-        self.state[HEIGHT-1][WIDTH-1] = BORN_ICON;
+        self.cells[HEIGHT-1][WIDTH-1] = BORN_ICON;
+        self.cells[HEIGHT-1][WIDTH-1] = BORN_ICON;
+        self.cells[HEIGHT-1][WIDTH-1] = BORN_ICON;
 
         for i in HEIGHT-12..HEIGHT-1 {
             for j in WIDTH-6..WIDTH-1 {
-                self.state[i][j] = BORN_ICON;
+                self.cells[i][j] = BORN_ICON;
             }
         }
 
         for i in 0..8 {
             for j in 0..12 {
-                self.state[i][j] = BORN_ICON;
+                self.cells[i][j] = BORN_ICON;
             }
         }
 
         for i in 10..25 {
             for j in 30..40 {
-                self.state[i][j] = BORN_ICON;
+                self.cells[i][j] = BORN_ICON;
             }
         }
     }
@@ -123,22 +123,22 @@ impl Generation {
     pub fn tick(&mut self) -> Generation {
         let mut f_generation = Generation::new();
 
-        for (i, row) in self.state.iter().enumerate() {
-            for (j, col) in row.iter().enumerate() {
+        for (i, row) in self.cells.iter().enumerate() {
+            for (j, _col) in row.iter().enumerate() {
 
                 let n = self.neighbor_count(i, j);
 
                 if self.is_cell_alive(i, j) {
                     if n < 2 || n > 3 {
-                        f_generation.state[i][j] = KILLED_ICON;
+                        f_generation.cells[i][j] = KILLED_ICON;
                         f_generation.killed += 1;
                     } else {
-                        f_generation.state[i][j] = SURVIVED_ICON;
+                        f_generation.cells[i][j] = SURVIVED_ICON;
                         f_generation.survived += 1;
                     }
                 } else {  // is_dead, essentially :)
                     if n == 3 {
-                        f_generation.state[i][j] = BORN_ICON;
+                        f_generation.cells[i][j] = BORN_ICON;
                         f_generation.born += 1
                     }
                 }
@@ -151,7 +151,7 @@ impl Generation {
     }
 
     pub fn is_cell_alive(&self, i: usize, j: usize) -> bool {
-        match self.state[i][j] {
+        match self.cells[i][j] {
             BORN_ICON => true,
             SURVIVED_ICON => true,
             _ => false,
@@ -159,7 +159,7 @@ impl Generation {
     }
 
     pub fn neighbor_count(&self, i: usize, j: usize) -> i8 {
-        let l = self.state.len() - 1;
+        let l = self.cells.len() - 1;
         let mut n = 0;
 
         // Above left.
@@ -199,11 +199,11 @@ impl Generation {
     }
 
     pub fn print(&self) {
-        for row in self.state.iter() {
+        for row in self.cells.iter() {
             for col in row.iter() {
                 match col {
-                    'b' => print!("   "),
-                    _ => print!("{} ", col),
+                    'b' => print!("  "),  // needed since emoji's used are 2 char wide
+                    _ => print!("{}", col),
                 }
             }
             println!();
@@ -221,6 +221,11 @@ pub struct GoL {
     height: usize,
     tick_rate: u64,
     generation: Generation,
+}
+
+pub struct GenerationLifeCycle {
+    n: u8,
+    items: [u64; 3],
 }
 
 impl GoL {
@@ -246,10 +251,39 @@ impl GoL {
     }
 
     pub fn start(&mut self) {
+        let mut glc = GenerationLifeCycle {
+            n: 0,
+            items: [0, 0, 0],
+        };
         loop {
             self.generation.print();
             self.generation = self.generation.tick();
+
+            if self.has_stabilized(&mut glc) {
+                println!("Generations have stabalized!");
+                break;
+            }
+
             thread::sleep(time::Duration::from_millis(self.tick_rate));
         }
     }
+
+    // If the generations haven't changed in several iterations, then consider
+    // the Cells stabilized.
+    fn has_stabilized(&self, glc: &mut GenerationLifeCycle) -> bool {
+        let generation_items = [
+            self.generation.born,
+            self.generation.killed,
+            self.generation.survived,
+        ];
+        if generation_items == glc.items {
+            glc.n += 1;
+        } else {
+            glc.n = 1;
+            glc.items = generation_items
+        }
+
+        glc.n > 10
+    }
+
 }
