@@ -209,6 +209,8 @@ impl Generation {
 
     // Helper for printing all Cells of a Generation.
     pub fn print(&self) {
+        // Clears the screen.
+        //print!("{}[2J", 27 as char);
         for row in self.cells.iter() {
             for col in row.iter() {
                 match col {
@@ -255,15 +257,6 @@ impl GoL {
         }
     }
 
-    // Helper for printing the GoL cells.
-    pub fn print(&self) {
-        // Clears the screen.
-        print!("{}[2J", 27 as char);
-
-        // Print all Generation.
-        &self.generation.print();
-    }
-
     // "Start" the GoL by generating a new generation and printing it.
     pub fn start(&mut self) {
         let mut glc = GenerationLifeCycle {
@@ -298,7 +291,7 @@ impl GoL {
             glc.items = generation_items
         }
 
-        glc.n > 10
+        glc.n > 6
     }
 
 }
