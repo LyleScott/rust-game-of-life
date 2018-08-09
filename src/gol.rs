@@ -28,8 +28,8 @@ const SURVIVED_ICON: char = '💙';
 const DEAD_ICON: char = 'b';
 
 // TODO: Make arguments.
-const WIDTH: usize = 55;
-const HEIGHT: usize = 55;
+const WIDTH: usize = 40;
+const HEIGHT: usize = 40;
 
 
 pub struct Generation {
@@ -94,6 +94,7 @@ impl Generation {
         self.cells[21][11] = BORN_ICON;
         self.cells[22][11] = BORN_ICON;
         self.cells[23][11] = BORN_ICON;
+        /*
         self.cells[30][11] = BORN_ICON;
         self.cells[30][12] = BORN_ICON;
         self.cells[31][12] = BORN_ICON;
@@ -102,6 +103,7 @@ impl Generation {
         self.cells[33][15] = BORN_ICON;
         self.cells[34][16] = BORN_ICON;
         self.cells[35][17] = BORN_ICON;
+        */
 
         self.cells[HEIGHT-1][WIDTH-1] = BORN_ICON;
         self.cells[HEIGHT-1][WIDTH-1] = BORN_ICON;
@@ -119,11 +121,13 @@ impl Generation {
             }
         }
 
+        /*
         for i in 10..25 {
             for j in 30..40 {
                 self.cells[i][j] = BORN_ICON;
             }
         }
+        */
     }
 
     // Create a new Generation based off the current Generation.
