@@ -19,10 +19,15 @@ generations.
 
 use std::{thread, time};
 
+// Icons for Cell representations. Remember, the unicode character is sometimes
+// two characters wide. We handle DEAD_ICON specially in the code we can still
+// use a `char` datatype.
 const KILLED_ICON: char = '💔';
 const BORN_ICON: char = '💚';
 const SURVIVED_ICON: char = '💙';
 const DEAD_ICON: char = 'b';
+
+// TODO: Make arguments.
 const WIDTH: usize = 55;
 const HEIGHT: usize = 55;
 
@@ -37,6 +42,7 @@ pub struct Generation {
 
 impl Generation {
 
+    // Initialize a new Generation and its stats.
     pub fn new() -> Self {
         Self {
             cells: [[DEAD_ICON; WIDTH]; HEIGHT],
@@ -120,6 +126,7 @@ impl Generation {
         }
     }
 
+    // Create a new Generation based off the current Generation.
     pub fn tick(&mut self) -> Generation {
         let mut f_generation = Generation::new();
 
@@ -150,6 +157,7 @@ impl Generation {
         return f_generation
     }
 
+    // Helper for finding out if a specific cell is alive.
     pub fn is_cell_alive(&self, i: usize, j: usize) -> bool {
         match self.cells[i][j] {
             BORN_ICON => true,
@@ -158,6 +166,7 @@ impl Generation {
         }
     }
 
+    // Count all neighboring cells that are alive.
     pub fn neighbor_count(&self, i: usize, j: usize) -> i8 {
         let l = self.cells.len() - 1;
         let mut n = 0;
@@ -198,6 +207,7 @@ impl Generation {
         n
     }
 
+    // Helper for printing all Cells of a Generation.
     pub fn print(&self) {
         for row in self.cells.iter() {
             for col in row.iter() {
@@ -216,6 +226,13 @@ impl Generation {
 
 }
 
+// Keep track of Generation stats so we can preempt further Generations.
+pub struct GenerationLifeCycle {
+    n: u8,
+    items: [u64; 3],
+}
+
+// Game of Life state.
 pub struct GoL {
     width: usize,
     height: usize,
@@ -223,13 +240,9 @@ pub struct GoL {
     generation: Generation,
 }
 
-pub struct GenerationLifeCycle {
-    n: u8,
-    items: [u64; 3],
-}
-
 impl GoL {
 
+    // Initialize the first (aka seed) Generation.
     pub fn new(tick_rate: u64) -> Self {
         let mut generation = Generation::new();
         generation.seed();
@@ -242,6 +255,7 @@ impl GoL {
         }
     }
 
+    // Helper for printing the GoL cells.
     pub fn print(&self) {
         // Clears the screen.
         print!("{}[2J", 27 as char);
@@ -250,6 +264,7 @@ impl GoL {
         &self.generation.print();
     }
 
+    // "Start" the GoL by generating a new generation and printing it.
     pub fn start(&mut self) {
         let mut glc = GenerationLifeCycle {
             n: 0,
@@ -260,7 +275,7 @@ impl GoL {
             self.generation = self.generation.tick();
 
             if self.has_stabilized(&mut glc) {
-                println!("Generations have stabalized!");
+                println!("\nGenerations have stabalized!\n");
                 break;
             }
 
